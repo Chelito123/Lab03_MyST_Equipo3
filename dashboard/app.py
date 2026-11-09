@@ -19,16 +19,16 @@ STYLE = f"""
 <style>
 html, body, [class*="css"], .stMarkdown, .stRadio, .stMultiSelect {{ font-family: {FONT}; }}
 .block-container {{ max-width: 1180px; padding-top: 3rem; }}
-h1 {{ font-size: 3rem !important; font-weight: 600 !important; letter-spacing: -0.015em; color: #1d1d1f; }}
-h2, h3 {{ font-weight: 600 !important; letter-spacing: -0.01em; color: #1d1d1f; }}
-[data-testid="stCaptionContainer"] {{ color: #6e6e73; font-size: 0.95rem; }}
-[data-testid="stMetric"] {{ background: #f5f5f7; border-radius: 18px; padding: 18px 22px; }}
-[data-testid="stMetricLabel"] {{ color: #6e6e73; }}
-[data-testid="stMetricValue"] {{ font-weight: 600; letter-spacing: -0.02em; color: #1d1d1f; }}
-.stTabs [data-baseweb="tab-list"] {{ gap: 28px; border-bottom: 1px solid #d2d2d7; }}
+h1 {{ font-size: 3rem !important; font-weight: 600 !important; letter-spacing: -0.015em; }}
+h2, h3 {{ font-weight: 600 !important; letter-spacing: -0.01em; }}
+[data-testid="stCaptionContainer"] {{ opacity: 0.75; font-size: 0.95rem; }}
+[data-testid="stMetric"] {{ background: rgba(128, 128, 128, 0.10); border-radius: 18px; padding: 18px 22px; }}
+[data-testid="stMetricLabel"] {{ opacity: 0.75; }}
+[data-testid="stMetricValue"] {{ font-weight: 600; letter-spacing: -0.02em; }}
+.stTabs [data-baseweb="tab-list"] {{ gap: 28px; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }}
 .stTabs [data-baseweb="tab"] {{ font-size: 1.05rem; }}
-[data-testid="stPlotlyChart"] {{ background: #ffffff; border-radius: 18px; padding: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }}
+[data-testid="stPlotlyChart"] {{ background: rgba(128, 128, 128, 0.05); border-radius: 18px; padding: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }}
 </style>
 """
 
@@ -54,8 +54,7 @@ def load(folder_key, stamp_key):
 def chart(figure, height=380):
     """Dibuja una figura interactiva con estilo común."""
     figure.update_layout(height=height, margin=dict(l=40, r=20, t=50, b=40), hovermode="x unified",
-                         template="plotly_white", font=dict(family=FONT, color="#1d1d1f"),
-                         title_font=dict(size=17), colorway=["#0071e3", "#ff9f0a", "#30d158",
+                         font=dict(family=FONT), title_font=dict(size=17), colorway=["#0071e3", "#ff9f0a", "#30d158",
                                                              "#bf5af2", "#ff375f", "#64d2ff"])
     st.plotly_chart(figure, width="stretch")
 
@@ -192,7 +191,8 @@ def main():
         return
     stamp = max(path.stat().st_mtime for path in ARTIFACTS.glob("*.*"))
     data = load(str(ARTIFACTS), stamp)
-    st.caption("Grupo: " + ", ".join(data["modelo"]["activos"]))
+    st.caption("Grupo: " + ", ".join(data["modelo"]["activos"]) +
+               " · Modo claro u oscuro: menú ⋮ arriba a la derecha → Light o Dark")
     tab_exec, tab_tech = st.tabs(["Vista ejecutiva", "Vista técnica"])
     with tab_exec:
         executive(data)
