@@ -9,7 +9,9 @@ filtros de Kalman, operar con VECM y bandas de z-score, y evaluar con costos en 
 
 ## Hitos
 
-| Hito | Fecha objetivo | Estado |
+> Para los hitos marcados como "Hecho", las fechas registran su cierre, no un plan previo. Para los hitos pendientes, indican la fecha prevista. El trabajo se concentró al final (ver `postmortem.md`).
+
+| Hito | Fecha registrada | Estado |
 |---|---|---|
 | Pipeline de datos completo | 2026-11-08 | Hecho |
 | Prueba de cointegración completa | 2026-11-08 | Hecho |
