@@ -13,7 +13,24 @@ from plotly.subplots import make_subplots
 from scipy.stats import norm
 
 ARTIFACTS = Path(__file__).resolve().parents[1] / "artifacts"
-SEGMENT_COLORS = {"train": "#1f77b4", "test": "#ff7f0e", "validacion": "#2ca02c"}
+SEGMENT_COLORS = {"train": "#0071e3", "test": "#ff9f0a", "validacion": "#30d158"}
+FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif'
+STYLE = f"""
+<style>
+html, body, [class*="css"], .stMarkdown, .stRadio, .stMultiSelect {{ font-family: {FONT}; }}
+.block-container {{ max-width: 1180px; padding-top: 3rem; }}
+h1 {{ font-size: 3rem !important; font-weight: 600 !important; letter-spacing: -0.015em; color: #1d1d1f; }}
+h2, h3 {{ font-weight: 600 !important; letter-spacing: -0.01em; color: #1d1d1f; }}
+[data-testid="stCaptionContainer"] {{ color: #6e6e73; font-size: 0.95rem; }}
+[data-testid="stMetric"] {{ background: #f5f5f7; border-radius: 18px; padding: 18px 22px; }}
+[data-testid="stMetricLabel"] {{ color: #6e6e73; }}
+[data-testid="stMetricValue"] {{ font-weight: 600; letter-spacing: -0.02em; color: #1d1d1f; }}
+.stTabs [data-baseweb="tab-list"] {{ gap: 28px; border-bottom: 1px solid #d2d2d7; }}
+.stTabs [data-baseweb="tab"] {{ font-size: 1.05rem; }}
+[data-testid="stPlotlyChart"] {{ background: #ffffff; border-radius: 18px; padding: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); }}
+</style>
+"""
 
 
 @st.cache_data
@@ -36,7 +53,10 @@ def load(folder_key, stamp_key):
 
 def chart(figure, height=380):
     """Dibuja una figura interactiva con estilo común."""
-    figure.update_layout(height=height, margin=dict(l=40, r=20, t=50, b=40), hovermode="x unified")
+    figure.update_layout(height=height, margin=dict(l=40, r=20, t=50, b=40), hovermode="x unified",
+                         template="plotly_white", font=dict(family=FONT, color="#1d1d1f"),
+                         title_font=dict(size=17), colorway=["#0071e3", "#ff9f0a", "#30d158",
+                                                             "#bf5af2", "#ff375f", "#64d2ff"])
     st.plotly_chart(figure, width="stretch")
 
 
@@ -165,6 +185,7 @@ def technical(data):
 def main():
     """Punto de entrada de la app."""
     st.set_page_config(page_title="Lab03 Equipo 3", layout="wide")
+    st.markdown(STYLE, unsafe_allow_html=True)
     st.title("Lab03: arbitraje estadístico con Kalman")
     if not (ARTIFACTS / "metricas.json").exists():
         st.error("Faltan los artefactos. Corre primero: python main.py")
