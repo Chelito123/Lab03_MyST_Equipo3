@@ -1,7 +1,5 @@
 # Post-mortem — Lab03_MyST_Equipo3
 
-> **Borrador.** Los puntos marcados con `[EQUIPO]` solo los puede responder el equipo. Hay que completarlos y borrar este aviso antes de entregar.
-
 ## 1. Hitos: qué se cumplió y qué se retrasó
 
 Todos los entregables técnicos quedaron listos, pero no con un ritmo sostenido: pipeline, selección, filtros, backtest, dashboard y reporte se construyeron cerca de la fecha límite, y el repositorio se creó el mismo día de la entrega (2026-11-08). Por eso:
@@ -10,7 +8,11 @@ Todos los entregables técnicos quedaron listos, pero no con un ritmo sostenido:
 - Hay un solo archivo de sprint, aunque el laboratorio pide uno por semana.
 - El historial de commits refleja la subida final y no el desarrollo real.
 
-`[EQUIPO]` ¿Qué impidió empezar antes? ¿Qué hitos se pensaba tener en semanas anteriores?
+**Línea de tiempo real:**
+- Del 2 al 4 de noviembre se revisaron las indicaciones y la teoría (S11–S14) y se preparó un README guía con las convenciones del modelo.
+- El 8 de noviembre, día de la entrega, se decidieron el universo, la ventana y la herramienta del dashboard, y se construyó todo lo demás.
+
+No hubo hitos intermedios con fecha: el proyecto pasó directamente de la etapa de planeación a la de entrega, sin avances parciales verificables.
 
 ## 2. Cuellos de botella
 
@@ -25,7 +27,8 @@ Todos los entregables técnicos quedaron listos, pero no con un ritmo sostenido:
 
 - La búsqueda del universo y las decisiones de diseño se concentraron al final, lo que dejó poco margen para explorar alternativas.
 - El grupo solo se conoció después de construir el embudo, con muy poco tiempo para reaccionar a un resultado débil.
-- `[EQUIPO]` ¿Cómo se repartió y coordinó el trabajo en la práctica? ¿Qué parte quedó concentrada en una persona? ¿Cómo aseguraron que los tres entienden todo el código, parte del cual se generó con IA?
+- **El trabajo se concentró en una persona.** Los roles por área (charter) se asignaron el día de la entrega, pero la implementación se hizo en una sola sesión con Claude Code desde la cuenta de un integrante. El historial de Git no refleja una contribución repartida.
+- **Dependencia de la IA.** Gran parte del código lo generó un asistente: ADF y Johansen programados a mano, filtros, backtest, dashboard y reporte. El laboratorio exige que cualquier integrante explique cualquier línea, y ese es el mayor riesgo del proyecto para la exposición: hay que estudiar el código de las otras áreas, no solo de la propia.
 
 ## 3. Qué haríamos distinto en producción
 
@@ -35,7 +38,11 @@ Todos los entregables técnicos quedaron listos, pero no con un ritmo sostenido:
 - **Modelar la ejecución real:** deslizamiento, profundidad de libro y disponibilidad y costo real del préstamo por acción. Aquí se ejecuta al cierre sin deslizamiento y con préstamo fijo de 0.25 %.
 - **Monitorear en vivo:** retesteo periódico de la cointegración, alertas sobre innovaciones y salida automática del grupo cuando la relación se rompa.
 - **Separar quien calibra de quien valida.** El walk-forward de este proyecto no es estrictamente fuera de muestra, porque el grupo y los filtros se calibraron con todo train.
-- `[EQUIPO]` ¿Qué cambiarían en la forma de trabajar como equipo?
+- **En la forma de trabajar como equipo:**
+  - Fijar universo y herramientas en la primera semana.
+  - Hacer un sprint por semana con avances revisables.
+  - Que cada integrante haga commits de su área conforme avanza, no al final.
+  - Usar la IA para acelerar partes que cada quien ya entiende y revisar juntos lo que genera, en vez de delegarle el proyecto completo.
 
 ## 4. Cómo se materializaron los riesgos del registro
 
