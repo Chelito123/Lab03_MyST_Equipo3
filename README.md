@@ -2,8 +2,8 @@
 
 Microestructuras y Sistemas de Trading · ITESO · Otoño 2026 · Módulo 3 (Arbitraje Estadístico)
 
-Las indicaciones oficiales están en `Lab03.pdf` y la teoría en `S11` a `S14`, en la carpeta `Teoria/`
-del curso.
+Las indicaciones oficiales (`Lab03.pdf`) y la teoría (`S11` a `S14`) están en la carpeta `Teoria/` del curso,
+que no forma parte de este repositorio.
 
 **Resultado en una línea:** de 28 grupos de utilities probados, solo 1 pasa Johansen en train, y la
 evidencia apunta a que es más un artefacto de la búsqueda que una relación estructural (sección 5.6).
@@ -91,12 +91,12 @@ usa el proyecto. Si alguna cambia, hay que actualizar esta tabla y el código al
 
 | # | Tema | Convención | Por qué / fuente |
 |---|---|---|---|
-| C1 | **¿A qué se le calcula el z-score?** | El z-score se calcula sobre el **término de corrección de error** ECT_t = β̂ᵀ log P_t − c, es decir, la desviación del equilibrio. Esa serie es el spread S_t del filtro 1 y sobre ella opera el filtro 2. **No** se usan los residuales ε_t de la ecuación del VECM. Del VECM se toman α (velocidades de ajuste), la condición −2 < βᵀα < 0 y la vida media implícita. | Es la práctica usual: z-score sobre el spread de cointegración o la innovación de Kalman (Chan, 2013). S14 p.14 define ese ECT. Los ε_t son 6 choques impredecibles por construcción, así que no revierten a la media ni dan una señal única. Así, el Lab03 3.4 y 3.6 describen la misma serie. |
+| C1 | **¿A qué se le calcula el z-score?** | **Desviación respecto a la sección 3.6 del Lab03.** El z-score se calcula sobre el **término de corrección de error** ECT_t = β̂ᵀ log P_t − c, es decir, la desviación del equilibrio. Esa serie es el spread S_t del filtro 1 y sobre ella opera el filtro 2. **No** se usan los residuales ε_t de la ecuación del VECM. Del VECM se toman α (velocidades de ajuste), la condición −2 < βᵀα < 0 (βᵀα = −0.0256: el sistema corrige) y la vida media implícita (26.7 días, contra 29.7 por Ornstein-Uhlenbeck). | Es la práctica usual: z-score sobre el spread de cointegración o la innovación de Kalman (Chan, 2013). S14 p.14 define ese ECT. Los ε_t son 6 choques impredecibles por construcción, así que no revierten a la media ni dan una señal única. Así, el Lab03 3.4 y 3.6 describen la misma serie. |
 | C2 | **Engle-Granger** | **Prioriza, no elimina.** Se aplica a todos los pares dentro de cada grupo y se registra cuántos tienen p < 0.05, para ordenar los grupos. Todos los grupos que pasan la correlación siguen a Johansen, que es el criterio definitivo. | Un grupo puede no tener ningún par estacionario y ser estacionario como portafolio (S14 p.6 y p.16). Si Engle-Granger eliminara, esos grupos se perderían. La tabla de selección reporta el resultado de esta etapa para cada grupo. |
 | C3 | **Log-precios** | Johansen, Engle-Granger, el filtro 1 y el spread usan **log-precios**. El sizing usa precios en nivel. | S12 p.14 y S14 p.7: con log-precios, β son pesos en dólares, que es lo que pide el sizing N_i ∝ \|β_i\| (S14 p.20). |
 | C4 | **Estado del filtro 1** | Es el descrito en la sección 3, punto 2: (c_t, β⁽²⁾…β⁽⁶⁾) y β⁽¹⁾ ≡ +1 sobre la pata de mayor \|β\|. | S14 p.13 y p.18. |
 | C5 | **Inicialización y burn-in del filtro 1** | ẑ_0 = vector de Johansen normalizado (más c como media del spread en train), P_0 diagonal y R estimado con la varianza de los residuales en train. Q se calibra con la razón Q/R. Burn-in: 60 días sin operar. | S13 p.16: solo importa Q/R y se necesita un burn-in hasta que P_t se estabilice. |
-| C6 | **σ̂ del filtro 2** | Varianza del modelo: σ̂²_{t\|t−1} = p_{t−1} + q + r, con el **prior**. La EWMA de innovaciones (λ) queda como alternativa documentada. | S13 p.20. El estado de Kalman es μ_t; σ_t² es la varianza de la innovación, no un estado aparte. |
+| C6 | **σ̂ del filtro 2** | Varianza del modelo: σ̂²_{t\|t−1} = p_{t−1} + q + r, con el **prior**. La EWMA de innovaciones (λ) queda como alternativa documentada. | S13 p.20. El estado de Kalman es μ_t; σ_t² es la varianza de la innovación, no un estado aparte. **Limitación:** con r fijo, σ̂ converge a una constante y no se adapta a cambios de volatilidad; la varianza normalizada del filtro 1 sube de 0.87 en train a 1.55 en validación. |
 | C7 | **Vida media** | Se usa la fórmula de Ornstein-Uhlenbeck, −ln2/λ, sobre el spread de train, para calibrar la tenencia máxima (h_max, en múltiplos de la vida media). La vida media implícita del VECM, −ln2/ln(1+βᵀα), se reporta como verificación. El rango utilizable es de 5 a 60 días. | S12 p.17 y S14 p.14 y p.16. |
 | C8 | **Filtro de correlación** | Correlación móvil de 252 días sobre **retornos logarítmicos**, como promedio de los pares del grupo, con umbral > 0.7 y estable entre subventanas. Es solo una heurística. | S14 p.16. El Lab03 no dice si es sobre retornos o precios. |
 | C9 | **Johansen** | Término determinístico constante (`det_order = 0`), rezagos `k_ar_diff` elegidos por AIC del VAR en niveles menos 1 y valores críticos al 95 %. | S12 p.10 y S14 p.12: los términos determinísticos cambian los valores críticos. |
@@ -126,6 +126,8 @@ defensa frente al problema de pruebas múltiples (S12 p.23 y S14 p.15).
 
 La correlación es la media de los pares de **retornos logarítmicos diarios, 2010–2026, con toda la
 muestra**. Es **solo preliminar**; la prueba oficial se repite únicamente sobre train (convención C8).
+Solo el universo de utilities pasó por el embudo completo; los demás sectores se revisaron únicamente con
+esta correlación preliminar.
 
 | Sector (rivales directos) | Tickers | Correlación media | Historia común | Grupos de 6 posibles | Riesgos de ruptura a documentar |
 |---|---|---|---|---|---|
@@ -199,54 +201,8 @@ La regla se declaró antes de ver los datos y no se ajustó para que pasaran má
 ## 6. Requisitos previos
 
 - Python 3.12 y Git
-- [Claude Code](https://claude.com/claude-code) (opcional, para trabajar con las skills de la sección 7)
 
-## 7. Skills de Claude Code (instalar antes de programar)
-
-Ejecuta estos comandos **dentro de una sesión de Claude Code**.
-
-**a) Karpathy guidelines.** Cuatro reglas: pensar antes de codificar, simplicidad, cambios quirúrgicos
-y ejecución orientada a metas.
-
-```
-/plugin marketplace add forrestchang/andrej-karpathy-skills
-/plugin install andrej-karpathy-skills@karpathy-skills
-```
-
-(Repo: https://github.com/multica-ai/andrej-karpathy-skills. Su propio README instala desde `forrestchang`.)
-
-**b) Superpowers.** Flujo brainstorming → plan → TDD → code review. Se activa solo.
-
-```
-/plugin install superpowers@claude-plugins-official
-```
-
-Alternativa:
-
-```
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
-```
-
-(Repo: https://github.com/obra/superpowers.)
-
-**c) Claude Octopus.** Varios modelos de IA revisan la misma tarea, con comandos `/octo:*`.
-Se instala desde la **terminal**, no dentro de la sesión:
-
-```
-claude plugin marketplace add https://github.com/nyldn/plugins.git
-claude plugin install octo@nyldn-plugins
-```
-
-Después, dentro de Claude Code, ejecuta `/octo:setup`.
-
-> ⚠️ **Windows:** Octopus solo funciona dentro de **WSL**. No es compatible con PowerShell ni con Git Bash
-> nativos. Instala Claude Code y Octopus dentro de WSL.
-> Repo: https://github.com/nyldn/claude-octopus.
-
-Para verificar la instalación, escribe `/plugin` y revisa que aparezcan las tres.
-
-## 8. Instalación del proyecto
+## 7. Instalación del proyecto
 
 ```powershell
 git clone https://github.com/Chelito123/Lab03_MyST_Equipo3.git
@@ -266,7 +222,7 @@ python -m pip install -r requirements.txt
 > `python -m pip install numpy==2.5.3 pandas==3.0.5 scipy==1.18.1 matplotlib==3.11.1 plotly==7.1.0 yfinance==1.7.0 pytest==9.1.1 reportlab==5.0.1 pypdf==6.21.4 altair blinker cachetools click gitpython packaging pillow protobuf pydeck requests tenacity toml tornado typing-extensions watchdog starlette uvicorn anyio httpx itsdangerous python-multipart websockets`.
 > El dashboard no usa `pyarrow`.
 
-## 9. Reproducción: un solo comando
+## 8. Reproducción: un solo comando
 
 ```bash
 python main.py
@@ -302,7 +258,7 @@ Dashboard:
 python -m streamlit run dashboard/app.py
 ```
 
-## 10. Estructura del repositorio (obligatoria)
+## 9. Estructura del repositorio (obligatoria)
 
 ```
 Lab03_MyST_Equipo3/
@@ -324,7 +280,7 @@ Lab03_MyST_Equipo3/
 └── docs/                     # reporte.pdf, build_report.py, dashboard.md
 ```
 
-## 11. Pruebas obligatorias (`tests/`, pytest)
+## 10. Pruebas obligatorias (`tests/`, pytest)
 
 1. **Causalidad:** z_t no cambia si se recalcula el pipeline con datos solo hasta t (al menos 3 valores de t).
 2. **Normalización:** β̂ conserva escala y signo entre reestimaciones consecutivas.
@@ -338,11 +294,13 @@ Lab03_MyST_Equipo3/
      con esta calibración vale 0.97, porque un spread que revierte despacio es persistente por construcción,
      y esa persistencia es la señal que se opera. Bajarla exigiría una ganancia alta, y entonces el spread
      quedaría blanqueado y no habría nada que operar. Los valores están en `artifacts/diagnosticos.json`.
+     Unas innovaciones tan persistentes también indican que el filtro 1 no está bien especificado como modelo
+     de estado: es un costo aceptado para conservar la señal, no una virtud.
 
 También hay pruebas adicionales de la referencia estadística, la regla de señales y la ejecución al día
 siguiente.
 
-## 12. Guía de uso del dashboard
+## 11. Guía de uso del dashboard
 
 **Versión publicada:** https://chelito123-lab03-myst-equipo3-dashboardapp-azxhb5.streamlit.app/
 
@@ -379,7 +337,7 @@ Se abre en http://localhost:8501.
 5. En cualquier gráfica: arrastra para hacer zoom, doble clic para reiniciar, y clic en la leyenda para
    ocultar una serie.
 
-## 13. Figuras obligatorias (van en el reporte)
+## 12. Figuras obligatorias (van en el reporte)
 
 1. Precios individuales del grupo
 2. Spread con las señales
@@ -390,7 +348,7 @@ Se abre en http://localhost:8501.
 7. Curvas de capital en train, test y validación
 8. Distribución de retornos por operación
 
-## 14. Estado de la entrega
+## 13. Estado de la entrega
 
 - **Entrega:** 2026-11-08 a las 23:59. **Exposición:** 2026-11-09, sobre el dashboard.
 - **Repositorio:** https://github.com/Chelito123/Lab03_MyST_Equipo3
@@ -399,30 +357,12 @@ Se abre en http://localhost:8501.
 - **Universo:** se mantuvo utilities a pesar del resultado de la sección 5.6, que se reporta como hallazgo:
   la relación encontrada es probablemente un artefacto de la búsqueda.
 
-## 15. Gestión del proyecto
+## 14. Gestión del proyecto
 
-En `project_management/`:
-- `charter.md` (1 página): alcance, hitos con fechas, al menos 5 riesgos (probabilidad, impacto y
-  mitigación) y roles. Los riesgos de ruptura de la tabla 5.2 sirven como punto de partida.
-- `sprint_XX.md` (uno por semana): objetivo, tareas con estado y bloqueos.
-- `postmortem.md` (1–2 páginas).
+En `project_management/`: `charter.md` (alcance, hitos, riesgos y roles), `sprint_01.md` y `postmortem.md`.
 
-## 16. Uso de herramientas de IA
+## 15. Uso de herramientas de IA
 
 Se usó Claude Code (Anthropic) para implementar el pipeline, las pruebas y el dashboard, generar el reporte y
 revisar la consistencia entre `Lab03.pdf` y las sesiones S11–S14. Las decisiones de universo, herramienta y
 ventana las tomó el equipo. Cada integrante es responsable de todo el código y debe poder explicar cualquier línea.
-
-## 17. Entrega y penalizaciones
-
-- **Entregables:**
-  - repo público `Lab03_MyST_Equipo3`;
-  - `docs/reporte.pdf`;
-  - exposición: 10 min + 5 min de preguntas, sin leer y con todos los integrantes exponiendo.
-- **Fecha límite:** 23:59 del día anterior a la exposición. Se evalúa el último commit antes de esa hora.
-- **Penalizaciones:**
-  - entrega tardía: −20;
-  - si el repo no corre con `python main.py`: −10;
-  - si falta el reporte o el dashboard en `docs/`: −5;
-  - integrante sin commits: 0 en la parte técnica.
-- **Rúbrica:** 40 % técnica, 40 % exposición y 20 % quiz.
