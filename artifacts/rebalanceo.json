@@ -1,0 +1,27 @@
+{
+  "diario": {
+    "comisiones": 39237.96023480735,
+    "retorno_total": 0.12037522496706954,
+    "retorno_anual": 0.0077128646575830295,
+    "sharpe": 0.4707520765622919,
+    "sortino": 0.7899401059317575,
+    "calmar": 0.2483798872067422,
+    "max_drawdown": -0.031052694098226752,
+    "win_rate": 0.875,
+    "profit_factor": 7.596468717053873,
+    "operaciones": 16
+  },
+  "banda": {
+    "banda": 0.1,
+    "comisiones": 35040.69745928436,
+    "retorno_total": 0.12752155619519456,
+    "retorno_anual": 0.008146069205573925,
+    "sharpe": 0.5000979408244144,
+    "sortino": 0.8302181745553739,
+    "calmar": 0.2660866650770388,
+    "max_drawdown": -0.030614345905742524,
+    "win_rate": 0.875,
+    "profit_factor": 9.602292382548022,
+    "operaciones": 16
+  }
+}
