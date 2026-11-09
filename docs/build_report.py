@@ -179,7 +179,9 @@ def section_selection(context):
         para(f"Se evaluaron <b>{len(data)} grupos en total</b>, solo con train. Embudo: correlación móvil de 252 días "
              "sobre retornos, Engle-Granger, Johansen, validación del spread y estabilidad en subventanas. "
              "Engle-Granger <b>prioriza y no elimina</b>, porque un grupo puede no tener pares estacionarios y serlo "
-             "como portafolio. Esto se aparta de la lectura literal del laboratorio y es deliberado."),
+             "como portafolio. Esto se aparta de la lectura literal del laboratorio y es deliberado. "
+             f"Si Engle-Granger eliminara, seguirían {int((data['eg_pares_p05'] >= 1).sum())} de {len(data)} grupos "
+             f"y el elegido sobreviviría con {int(row['eg_pares_p05'])} par significativo."),
         table(frame_rows(shown, formats), widths=widths, font_size=6),
         para("EG: pares con p &lt; 0.05 de 15. k: rezagos del VECM. r k=1: rango con un solo rezago. "
              "Traza y Máx: estadísticos para r = 0. VM: vida media en días. Estab.: fracción de subventanas de "
@@ -205,7 +207,7 @@ def section_filter1(context, table_f1, gains):
         "t": lambda v: int(v), "y": lambda v: fmt(v, 4), "innovacion": lambda v: fmt(v, 4),
         "S": lambda v: fmt(v, 5), "K_norma": lambda v: fmt(v, 4), "beta_2": lambda v: fmt(v, 5)})
     return [
-        Paragraph("4. Filtro 1: pesos dinámicos", H1),
+        Paragraph("4. Filtro 1: pesos dinámicos (marco de Powell)", H1),
         para(f"<b>Normalización y signo.</b> El activo 1 es la pata de mayor |β| en train ({model['activos'][0]}) y su "
              "peso se fija en +1; una sola división fija escala y signo. El estado es un intercepto más los 5 pesos "
              "libres. <b>Inicialización:</b> z<sub>0</sub> es el vector de Johansen normalizado con c = media del "
@@ -245,7 +247,7 @@ def section_filter2(context, table_f2, gains):
         "sigma_previa": lambda v: fmt(v, 4), "z_previo": lambda v: fmt(v, 3), "K": lambda v: fmt(v, 4),
         "mu_posterior": lambda v: fmt(v, 4), "z_posterior": lambda v: fmt(v, 3)})
     return [
-        Paragraph("5. Filtro 2: generación de señal", H1),
+        Paragraph("5. Filtro 2: generación de señal (marco de Powell)", H1),
         para(f"Modelo de nivel local sobre S<sub>t</sub>. <b>r</b> = {model['r2']:.2e}, varianza del spread de train "
              f"tras el burn-in; <b>q</b> = {model['q_ratio_f2']:.0e} · r. La varianza σ² es la de la innovación, "
              "p + q + r. El z-score usa los estadísticos <b>previos</b> a la actualización: con los posteriores, el "
@@ -277,7 +279,7 @@ def section_filter2(context, table_f2, gains):
 
 def section_system():
     return [
-        Paragraph("6. Sistema completo como proceso de decisión secuencial", H1),
+        Paragraph("6. Sistema completo como proceso de decisión secuencial de Powell", H1),
         powell_table([
             ["Estado", "<b>Componente físico</b> R<sub>t</sub>: efectivo, acciones por pata y días en posición. <b>Componente de información</b> I<sub>t</sub>: precios y spread. <b>Componente de creencia</b> B<sub>t</sub>: (ẑ<sub>t</sub>, P<sub>t</sub>) del filtro 1 y (μ<sub>t</sub>, p<sub>t</sub>) del filtro 2. En S<sub>0</sub> quedan fijos β de Johansen, α del VECM, θ y los costos."],
             ["Decisión", "d<sub>t</sub> ∈ {−1, 0, +1} y acciones objetivo q<sub>i</sub> = d·sgn(β<sub>i</sub>)·N<sub>i</sub>/P<sub>i</sub>, con N<sub>i</sub> = 0.8·V·|β<sub>i</sub>|/Σ|β<sub>j</sub>|. Se decide al cierre de t y se ejecuta al cierre de t+1."],
@@ -310,7 +312,7 @@ def section_vecm(context):
         "Sharpe train": lambda v: fmt(v, 3), "Operaciones": lambda v: int(v)})
     return [
         Paragraph("7. VECM y señales", H1),
-        para("El z-score se calcula sobre el término de corrección de error ECT<sub>t</sub> = βᵀ log P<sub>t</sub> − c, "
+        para("<b>Desviación respecto a la sección 3.6 del laboratorio.</b> El z-score se calcula sobre el término de corrección de error ECT<sub>t</sub> = βᵀ log P<sub>t</sub> − c, "
              "que es el spread del filtro 1. Los residuales ε<sub>t</sub> de la ecuación del VECM son seis choques "
              "impredecibles por construcción: no revierten y no dan una señal única."),
         para(f"<b>Velocidades de ajuste α:</b> {alpha}. βᵀα = {vecm['beta_alpha']:.4f}, dentro de (−2, 0): el "
@@ -393,9 +395,17 @@ def section_limits(context):
              f"{diag['train']['filtro2']['varianza']:.2f}, pero la autocorrelación de rezago 1 es "
              f"{diag['train']['filtro1']['acf1']:.2f} y {diag['train']['filtro2']['acf1']:.2f}. Un spread que revierte "
              "despacio es persistente por construcción; una ganancia alta la reduciría, pero blanquearía la señal. "
-             "Con datos simulados del modelo, los filtros sí cumplen ambas condiciones."),
+             "Con datos simulados del modelo, los filtros sí cumplen ambas condiciones. Con datos reales se "
+             "cumple la varianza, no la autocorrelación: unas innovaciones tan persistentes indican que el filtro 1 "
+             "no está bien especificado como modelo de estado. Es un costo aceptado para conservar la señal."),
+        para(f"<b>Varianza fija en el filtro 2.</b> Con r fijo, σ converge a una constante y no se adapta a cambios "
+             f"de volatilidad. La varianza normalizada del filtro 1 sube de {diag['train']['filtro1']['varianza']:.2f} "
+             f"en train a {diag['validacion']['filtro1']['varianza']:.2f} en validación."),
+        para("<b>Métricas de train dentro de muestra.</b> Filtros y umbrales se calibran con todo train, así que el "
+             "z-score y el Sharpe de train no son fuera de muestra."),
         para("<b>Supuestos.</b> Ejecución al cierre del día siguiente sin deslizamiento, tasa libre de riesgo cero, "
-             "préstamo devengado sobre 252 días y ruido gaussiano. El filtro no modela colas pesadas."),
+             "préstamo devengado sobre 252 días y ruido gaussiano. El filtro no modela colas pesadas. Se permiten "
+             "acciones fraccionarias y el 80 % del capital se calcula antes de descontar la comisión."),
         para("<b>Implementación.</b> ADF, Engle-Granger y Johansen se programaron con numpy porque statsmodels no "
              "tiene binarios para Windows ARM64; se validaron contra sus resultados de referencia."),
         Paragraph("10. Uso de IA", H1),
