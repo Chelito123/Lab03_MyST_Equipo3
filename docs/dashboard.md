@@ -7,7 +7,9 @@ python main.py
 python -m streamlit run dashboard/app.py
 ```
 
-Se abre en http://localhost:8501 con dos pestañas:
+**Versión publicada:** https://chelito123-lab03-myst-equipo3-dashboardapp-azxhb5.streamlit.app/
+
+Localmente se abre en http://localhost:8501. Tiene dos pestañas:
 
 - **Vista ejecutiva:** curva de capital con drawdown, tarjeta de desempeño por tramo, atribución de costos, distribución de retornos y bitácora filtrable.
 - **Vista técnica:** spread con señales, z-score con umbrales, pesos, eigenvector móvil, ganancia de Kalman, varianza posterior y Sharpe móvil.

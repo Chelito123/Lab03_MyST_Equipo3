@@ -71,7 +71,7 @@ Estrategia de arbitraje estadístico sobre un portafolio de 6 activos cointegrad
 | Tamaño de posición | 80 % del capital, repartido proporcional a \|β̂_t\| |
 | Semilla aleatoria | `SEED = 42`, fijada en `main.py` |
 
-### Teoría de referencia (en esta carpeta)
+### Teoría de referencia (carpeta `Teoria/` del curso, no incluida en este repositorio)
 
 | Archivo | Para qué sirve |
 |---|---|
@@ -155,7 +155,7 @@ Se evaluaron **28 grupos** (utilities). Al 5 % se esperan unos **1.4 falsos posi
 cointegración real. Si se probaran los 6 sectores serían 93 grupos y unos 5 falsos positivos. Por eso se
 reporta el número total de grupos probados.
 
-### 5.4 Ventana y partición propuestas
+### 5.4 Ventana y partición
 
 - **Ventana:** 2012-01-03 a 2026-10-30, 3,729 días (unos 14.8 años), dentro del rango de 10–15.
 - **Partición:**
@@ -344,8 +344,10 @@ siguiente.
 
 ## 12. Guía de uso del dashboard
 
-**Abrir:** primero corre `python main.py` y después `python -m streamlit run dashboard/app.py`. Se abre en
-http://localhost:8501.
+**Versión publicada:** https://chelito123-lab03-myst-equipo3-dashboardapp-azxhb5.streamlit.app/
+
+**Abrir localmente:** primero corre `python main.py` y después `python -m streamlit run dashboard/app.py`.
+Se abre en http://localhost:8501.
 
 **Reglas:**
 - Lee los archivos de `artifacts/` y no vuelve a correr el backtest.
@@ -388,12 +390,14 @@ http://localhost:8501.
 7. Curvas de capital en train, test y validación
 8. Distribución de retornos por operación
 
-## 14. Decisiones pendientes
+## 14. Estado de la entrega
 
-- [ ] Entrega: 2026-11-08 a las 23:59. Exposición: 2026-11-09.
-- [ ] Crear el repo público en GitHub. Cada integrante debe tener commits propios.
-- [ ] Revisar `docs/reporte.pdf` y completar `project_management/postmortem.md`.
-- [ ] Decidir si se mantiene el universo de utilities, dado el resultado de la sección 5.6.
+- **Entrega:** 2026-11-08 a las 23:59. **Exposición:** 2026-11-09, sobre el dashboard.
+- **Repositorio:** https://github.com/Chelito123/Lab03_MyST_Equipo3
+- **Dashboard publicado:** https://chelito123-lab03-myst-equipo3-dashboardapp-azxhb5.streamlit.app/
+- **Reporte:** `docs/reporte.pdf`.
+- **Universo:** se mantuvo utilities a pesar del resultado de la sección 5.6, que se reporta como hallazgo:
+  la relación encontrada es probablemente un artefacto de la búsqueda.
 
 ## 15. Gestión del proyecto
 
